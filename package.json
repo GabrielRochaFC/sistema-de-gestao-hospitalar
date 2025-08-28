@@ -1,0 +1,33 @@
+{
+  "name": "sistema-de-gestao-hospitalar",
+  "version": "1.0.0",
+  "description": "Sistema de Gestão Hospitalar e de Serviços de Saúde (SGHSS)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch --env-file .env src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabrielRochaFC/sistema-de-gestao-hospitalar.git"
+  },
+  "keywords": [],
+  "author": "Gabriel Rocha",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/GabrielRochaFC/sistema-de-gestao-hospitalar/issues"
+  },
+  "homepage": "https://github.com/GabrielRochaFC/sistema-de-gestao-hospitalar#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0"
+  }
+}
