@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PATIENT
+  PROFESSIONAL
+}
+
+enum ProfessionalType {
+  DOCTOR
+  NURSE
+  TECHNICIAN
+}
+
+enum MedicalSpecialty {
+  GENERAL_PRACTICE
+  CARDIOLOGY
+  DERMATOLOGY
+  EMERGENCY_MEDICINE
+  FAMILY_MEDICINE
+  INTERNAL_MEDICINE
+  NEUROLOGY
+  OBSTETRICS_GYNECOLOGY
+  ONCOLOGY
+  ORTHOPEDICS
+  PEDIATRICS
+  PSYCHIATRY
+  RADIOLOGY
+  SURGERY
+  UROLOGY
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+  NO_SHOW
+}
+
+enum AppointmentType {
+  IN_PERSON
+  TELEMEDICINE
+}
+
+model User {
+  id        String @id @default(uuid())
+  email     String @unique
+  password  String
+  firstName String
+  lastName  String
+  cpf       String @unique
+
+  role Role @default(PATIENT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient      Patient?
+  professional Professional?
+
+  @@map("users")
+}
+
+model Patient {
+  id        String    @id @default(uuid())
+  birthDate DateTime?
+  phone     String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("patients")
+}
+
+model Professional {
+  id            String             @id @default(uuid())
+  licenseNumber String             @unique
+  type          ProfessionalType   @default(DOCTOR)
+  specialties   MedicalSpecialty[]
+  phone         String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("professionals")
+}
+
+model Appointment {
+  id              String            @id @default(uuid())
+  dateTime        DateTime
+  status          AppointmentStatus @default(SCHEDULED)
+  type            AppointmentType   @default(IN_PERSON)
+  telemedicineUrl String?
+  notes           String?
+
+  patient   Patient @relation(fields: [patientId], references: [id])
+  patientId String
+
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  professionalId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("appointments")
+}
