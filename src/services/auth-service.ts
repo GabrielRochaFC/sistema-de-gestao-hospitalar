@@ -3,9 +3,20 @@ import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/AppError";
 import { compare } from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
+import { User } from "generated/prisma";
+
+interface AuthRequest {
+  email: string;
+  password: string;
+}
+
+interface AuthResponse {
+  token: string;
+  user: Omit<User, "password">;
+}
 
 export class AuthService {
-  async authenticate(email: string, password: string) {
+  async authenticate({ email, password }: AuthRequest): Promise<AuthResponse> {
     const user = await this.findUserByEmail(email);
 
     await this.validatePassword(password, user.password);
