@@ -1,12 +1,12 @@
 import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/AppError";
 import { hash } from "bcrypt";
-import { Patient, User } from "generated/prisma";
-import type { CreatePatientData } from "@/schemas/patient-schemas";
+import { Professional, User } from "generated/prisma";
+import type { CreateProfessionalData } from "@/schemas/professional-schemas";
 
-interface CreatePatientResponse {
+interface CreateProfessionalResponse {
   user: Omit<User, "password">;
-  patient: Patient;
+  professional: Professional;
 }
 
 async function validateUserCreation(email: string, cpf: string) {
@@ -27,16 +27,29 @@ async function validateUserCreation(email: string, cpf: string) {
   }
 }
 
-export async function createPatient({
+async function validateLicenseNumber(licenseNumber: string) {
+  const professionalWithSameLicense = await prisma.professional.findUnique({
+    where: { licenseNumber },
+  });
+
+  if (professionalWithSameLicense) {
+    throw new AppError("Dados inválidos para cadastro", 400);
+  }
+}
+
+export async function createProfessional({
   firstName,
   lastName,
   email,
   password,
   cpf,
-  birthDate,
+  licenseNumber,
+  type,
+  specialties,
   phone,
-}: CreatePatientData): Promise<CreatePatientResponse> {
+}: CreateProfessionalData): Promise<CreateProfessionalResponse> {
   await validateUserCreation(email, cpf);
+  await validateLicenseNumber(licenseNumber);
 
   const result = await prisma.$transaction(async (tx) => {
     const hashedPassword = await hash(password, 10);
@@ -48,14 +61,16 @@ export async function createPatient({
         email,
         password: hashedPassword,
         cpf,
-        role: "PATIENT",
+        role: "PROFESSIONAL",
       },
     });
 
-    const patient = await tx.patient.create({
+    const professional = await tx.professional.create({
       data: {
         userId: user.id,
-        birthDate: birthDate ? new Date(birthDate) : null,
+        licenseNumber,
+        type,
+        specialties,
         phone,
       },
     });
@@ -64,7 +79,7 @@ export async function createPatient({
 
     return {
       user: userWithoutPassword,
-      patient,
+      professional,
     };
   });
 
