@@ -1,71 +1,50 @@
 import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/AppError";
-import { hash } from "bcrypt";
-import { Patient, User } from "generated/prisma";
+import { Patient, Role } from "generated/prisma";
 import type { CreatePatientData } from "@/schemas/patient-schemas";
 
 interface CreatePatientResponse {
-  user: Omit<User, "password">;
   patient: Patient;
 }
 
-async function validateUserCreation(email: string, cpf: string) {
-  const userWithSameEmail = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (userWithSameEmail) {
-    throw new AppError("Dados inválidos para cadastro", 400);
-  }
-
-  const userWithSameCpf = await prisma.user.findUnique({
-    where: { cpf },
-  });
-
-  if (userWithSameCpf) {
-    throw new AppError("Dados inválidos para cadastro", 400);
-  }
-}
-
 export async function createPatient({
-  firstName,
-  lastName,
-  email,
-  password,
-  cpf,
+  userId,
   birthDate,
-  phone,
 }: CreatePatientData): Promise<CreatePatientResponse> {
-  await validateUserCreation(email, cpf);
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new AppError("Usuário não encontrado", 404);
+  }
+
+  const patient = await prisma.patient.findUnique({
+    where: { userId },
+  });
+
+  if (patient) {
+    throw new AppError("Paciente já cadastrado", 400);
+  }
 
   const result = await prisma.$transaction(async (tx) => {
-    const hashedPassword = await hash(password, 10);
-
-    const user = await tx.user.create({
+    const newPatient = await tx.patient.create({
       data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-        cpf,
-        role: "PATIENT",
+        userId,
+        birthDate,
       },
     });
 
-    const patient = await tx.patient.create({
+    await tx.user.update({
+      where: { id: userId },
       data: {
-        userId: user.id,
-        birthDate: birthDate ? new Date(birthDate) : null,
-        phone,
+        role: {
+          push: Role.PATIENT,
+        },
       },
     });
 
-    const { password: _, ...userWithoutPassword } = user;
-
-    return {
-      user: userWithoutPassword,
-      patient,
-    };
+    return { patient: newPatient };
   });
 
   return result;

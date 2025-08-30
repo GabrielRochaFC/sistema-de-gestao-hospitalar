@@ -12,7 +12,7 @@ async function main() {
   const cpf = process.env.ADMIN_CPF!;
 
   const existingAdmin = await prisma.user.findFirst({
-    where: { email: adminEmail, role: "ADMIN" },
+    where: { email: adminEmail, role: { has: "ADMIN" } },
   });
 
   if (existingAdmin) {
@@ -29,7 +29,7 @@ async function main() {
       firstName,
       lastName,
       cpf,
-      role: "ADMIN",
+      role: ["ADMIN"],
     },
   });
 

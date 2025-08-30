@@ -15,57 +15,55 @@ interface AuthResponse {
   user: Omit<User, "password">;
 }
 
-export class AuthService {
-  async authenticate({ email, password }: AuthRequest): Promise<AuthResponse> {
-    const user = await this.findUserByEmail(email);
+export async function authenticate({
+  email,
+  password,
+}: AuthRequest): Promise<AuthResponse> {
+  const user = await findUserByEmail(email);
 
-    await this.validatePassword(password, user.password);
+  await validatePassword(password, user.password);
 
-    const token = this.generateToken(user.id, user.role);
+  const token = generateToken(user.id, user.role);
 
-    const { password: _, ...userWithoutPassword } = user;
+  const { password: _, ...userWithoutPassword } = user;
 
-    return {
-      token,
-      user: userWithoutPassword,
-    };
+  return {
+    token,
+    user: userWithoutPassword,
+  };
+}
+
+async function findUserByEmail(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    throw new AppError("Usuário ou senha inválidos", 401);
   }
 
-  private async findUserByEmail(email: string) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+  return user;
+}
 
-    if (!user) {
-      throw new AppError("Invalid email or password", 401);
-    }
+async function validatePassword(plainPassword: string, hashedPassword: string) {
+  const isPasswordValid = await compare(plainPassword, hashedPassword);
 
-    return user;
+  if (!isPasswordValid) {
+    throw new AppError("Usuário ou senha inválidos", 401);
   }
+}
 
-  private async validatePassword(
-    plainPassword: string,
-    hashedPassword: string
-  ) {
-    const isPasswordValid = await compare(plainPassword, hashedPassword);
+function generateToken(userId: string, role: string[] | null) {
+  const { secret, expiresIn } = authConfig.jwt;
 
-    if (!isPasswordValid) {
-      throw new AppError("Invalid email or password", 401);
-    }
-  }
-
-  private generateToken(userId: string, role: string | null) {
-    const { secret, expiresIn } = authConfig.jwt;
-
-    return jwt.sign(
-      {
-        role: role ?? "PATIENT",
-      },
-      secret,
-      {
-        subject: userId,
-        expiresIn,
-      } as SignOptions
-    );
-  }
+  return jwt.sign(
+    {
+      role: role ?? ["PATIENT"],
+    },
+    secret,
+    {
+      subject: userId,
+      expiresIn,
+    } as SignOptions
+  );
 }

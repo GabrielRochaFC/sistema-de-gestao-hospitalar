@@ -6,8 +6,8 @@ export class PatientController {
   async create(req: Request, res: Response) {
     const patientData = createPatientSchema.parse(req.body);
 
-    const { user, patient } = await createPatient(patientData);
+    const { patient } = await createPatient(patientData);
 
-    return res.status(201).json({ user, patient });
+    return res.status(201).json({ patient });
   }
 }

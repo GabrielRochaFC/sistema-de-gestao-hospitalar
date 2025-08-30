@@ -4,10 +4,15 @@ import { createProfessionalSchema } from "@/schemas/professional-schemas";
 
 export class ProfessionalController {
   async create(req: Request, res: Response) {
-    const professionalData = createProfessionalSchema.parse(req.body);
+    const userId = req.user?.id;
 
-    const { user, professional } = await createProfessional(professionalData);
+    const professionalData = createProfessionalSchema.parse({
+      userId,
+      ...req.body,
+    });
 
-    return res.status(201).json({ user, professional });
+    const { professional } = await createProfessional(professionalData);
+
+    return res.status(201).json({ professional });
   }
 }

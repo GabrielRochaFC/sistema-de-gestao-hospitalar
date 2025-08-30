@@ -1,87 +1,72 @@
 import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/AppError";
-import { hash } from "bcrypt";
-import { Professional, User } from "generated/prisma";
+import { Professional, Role } from "generated/prisma";
 import type { CreateProfessionalData } from "@/schemas/professional-schemas";
 
 interface CreateProfessionalResponse {
-  user: Omit<User, "password">;
   professional: Professional;
 }
 
-async function validateUserCreation(email: string, cpf: string) {
-  const userWithSameEmail = await prisma.user.findUnique({
-    where: { email },
+async function validateProfessionalCreation(
+  userId: string,
+  licenseNumber: string
+) {
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId },
   });
 
-  if (userWithSameEmail) {
-    throw new AppError("Dados inválidos para cadastro", 400);
+  if (!userExists) {
+    throw new AppError("Usuário não encontrado", 404);
   }
 
-  const userWithSameCpf = await prisma.user.findUnique({
-    where: { cpf },
+  const professional = await prisma.professional.findUnique({
+    where: { userId },
   });
 
-  if (userWithSameCpf) {
-    throw new AppError("Dados inválidos para cadastro", 400);
+  if (professional) {
+    throw new AppError("Profissional já cadastrado", 400);
   }
-}
 
-async function validateLicenseNumber(licenseNumber: string) {
   const professionalWithSameLicense = await prisma.professional.findUnique({
     where: { licenseNumber },
   });
 
   if (professionalWithSameLicense) {
-    throw new AppError("Dados inválidos para cadastro", 400);
+    throw new AppError("Número de licença já cadastrado", 400);
   }
 }
 
 export async function createProfessional({
-  firstName,
-  lastName,
-  email,
-  password,
-  cpf,
   licenseNumber,
   type,
   specialties,
-  phone,
+  userId,
 }: CreateProfessionalData): Promise<CreateProfessionalResponse> {
-  await validateUserCreation(email, cpf);
-  await validateLicenseNumber(licenseNumber);
+  await validateProfessionalCreation(userId, licenseNumber);
 
   const result = await prisma.$transaction(async (tx) => {
-    const hashedPassword = await hash(password, 10);
-
-    const user = await tx.user.create({
+    const newProfessional = await tx.professional.create({
       data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-        cpf,
-        role: "PROFESSIONAL",
-      },
-    });
-
-    const professional = await tx.professional.create({
-      data: {
-        userId: user.id,
+        userId,
         licenseNumber,
         type,
         specialties,
-        phone,
       },
     });
 
-    const { password: _, ...userWithoutPassword } = user;
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        role: {
+          push: Role.PROFESSIONAL,
+        },
+      },
+    });
 
-    return {
-      user: userWithoutPassword,
-      professional,
-    };
+    return newProfessional;
   });
 
-  return result;
+  return {
+    professional: result,
+  };
 }

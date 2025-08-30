@@ -5,6 +5,7 @@ const sessionsRoutes = Router();
 
 const sessionsController = new SessionsController();
 
-sessionsRoutes.post("/login", sessionsController.create);
+sessionsRoutes.post("/login", sessionsController.login);
+sessionsRoutes.post("/register", sessionsController.register);
 
 export { sessionsRoutes };
