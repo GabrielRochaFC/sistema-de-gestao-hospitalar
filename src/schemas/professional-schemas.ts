@@ -33,19 +33,25 @@ export const medicalSpecialtySchema = z.enum(
 export const createProfessionalSchema = z
   .object({
     userId: z.uuid("ID inválido"),
-    licenseNumber: z.string().min(1, "Número da licença é obrigatório"),
+    licenseNumber: z
+      .string()
+      .min(1, "Número da licença deve ser maior que 1")
+      .optional(),
     type: professionalTypeSchema.default("DOCTOR"),
     specialties: z.array(medicalSpecialtySchema).optional().default([]),
   })
   .refine(
     (data) => {
       if (data.type === "DOCTOR") {
-        return data.specialties && data.specialties.length > 0;
+        return (
+          data.specialties && data.specialties.length > 0 && data.licenseNumber
+        );
       }
       return true;
     },
     {
-      error: "Médicos devem ter pelo menos uma especialidade",
+      error:
+        "Médicos devem ter pelo menos uma especialidade e um número de licença",
     }
   );
 

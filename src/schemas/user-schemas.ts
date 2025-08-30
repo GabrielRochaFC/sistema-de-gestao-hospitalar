@@ -16,6 +16,10 @@ export const createUserSchema = z.object({
     .transform(normalizePhone)
     .refine((val) => isValidPhone(val), { error: "Telefone inválido" })
     .optional(),
+  birthDate: z.coerce
+    .date()
+    .max(new Date(), { error: "Data de nascimento não pode ser no futuro" })
+    .optional(),
 });
 
 export const getUserSchema = z.object({

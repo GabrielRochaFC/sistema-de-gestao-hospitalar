@@ -9,7 +9,7 @@ interface CreateProfessionalResponse {
 
 async function validateProfessionalCreation(
   userId: string,
-  licenseNumber: string
+  licenseNumber: string | undefined
 ) {
   const userExists = await prisma.user.findUnique({
     where: { id: userId },
@@ -27,12 +27,14 @@ async function validateProfessionalCreation(
     throw new AppError("Profissional já cadastrado", 400);
   }
 
-  const professionalWithSameLicense = await prisma.professional.findUnique({
-    where: { licenseNumber },
-  });
+  if (licenseNumber) {
+    const professionalWithSameLicense = await prisma.professional.findUnique({
+      where: { licenseNumber },
+    });
 
-  if (professionalWithSameLicense) {
-    throw new AppError("Número de licença já cadastrado", 400);
+    if (professionalWithSameLicense) {
+      throw new AppError("Número de licença já cadastrado", 400);
+    }
   }
 }
 

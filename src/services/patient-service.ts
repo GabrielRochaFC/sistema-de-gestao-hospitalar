@@ -9,7 +9,11 @@ interface CreatePatientResponse {
 
 export async function createPatient({
   userId,
-  birthDate,
+  address,
+  healthPlan,
+  allergies,
+  bloodType,
+  emergencyContact,
 }: CreatePatientData): Promise<CreatePatientResponse> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -31,7 +35,13 @@ export async function createPatient({
     const newPatient = await tx.patient.create({
       data: {
         userId,
-        birthDate,
+        address: {
+          create: address,
+        },
+        healthPlan,
+        allergies,
+        bloodType,
+        emergencyContact,
       },
     });
 

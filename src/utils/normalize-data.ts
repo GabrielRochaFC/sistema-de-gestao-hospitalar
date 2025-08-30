@@ -5,3 +5,7 @@ export const normalizeCPF = (cpf: string): string => {
 export const normalizePhone = (phone: string): string => {
   return phone.replace(/[^\d]/g, "");
 };
+
+export const normalizeZipCode = (zipCode: string): string => {
+  return zipCode.replace(/[^\d]/g, "");
+};

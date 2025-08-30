@@ -5,7 +5,7 @@ import { hash } from "bcrypt";
 import { User } from "generated/prisma";
 
 interface CreateUserResponse {
-  user: Omit<User, "password">;
+  user: Omit<User, "password" | "role">;
 }
 
 async function validateUserCreation(email: string, cpf: string) {
@@ -33,6 +33,7 @@ export async function createUser({
   password,
   cpf,
   phone,
+  birthDate,
 }: CreateUserData): Promise<CreateUserResponse> {
   await validateUserCreation(email, cpf);
 
@@ -47,10 +48,11 @@ export async function createUser({
       cpf,
       role: [],
       phone,
+      birthDate,
     },
   });
 
-  const { password: _, ...userWithoutPassword } = user;
+  const { password: _, role: __, ...userWithoutPassword } = user;
 
   return {
     user: userWithoutPassword,

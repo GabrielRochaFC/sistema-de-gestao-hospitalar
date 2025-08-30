@@ -4,7 +4,11 @@ import { createPatient } from "@/services/patient-service";
 
 export class PatientController {
   async create(req: Request, res: Response) {
-    const patientData = createPatientSchema.parse(req.body);
+    const userId = req.user?.id;
+    const patientData = createPatientSchema.parse({
+      userId,
+      ...req.body,
+    });
 
     const { patient } = await createPatient(patientData);
 
