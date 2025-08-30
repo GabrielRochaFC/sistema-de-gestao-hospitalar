@@ -22,9 +22,7 @@ export const createUserSchema = z.object({
     .optional(),
 });
 
-export const getUserSchema = z.object({
-  id: z.uuid("ID inválido"),
-});
+export const getUserSchema = z.uuid("ID inválido");
 
 export type CreateUserData = z.infer<typeof createUserSchema>;
 export type GetUserData = z.infer<typeof getUserSchema>;

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "@/utils/AppError";
 
-function verifyUserAuthorization(role: string[]) {
+function verifyUserAuthorization(requiredRoles: string[]) {
   return function (request: Request, response: Response, next: NextFunction) {
     const user = request.user;
 
@@ -9,7 +9,11 @@ function verifyUserAuthorization(role: string[]) {
       throw new AppError("User not authenticated", 401);
     }
 
-    if (!role.includes(user.role)) {
+    const hasRequiredRole = user.role.some((userRole) =>
+      requiredRoles.includes(userRole)
+    );
+
+    if (!hasRequiredRole) {
       throw new AppError("User does not have permission", 403);
     }
 
