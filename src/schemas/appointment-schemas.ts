@@ -25,4 +25,19 @@ export const createAppointmentSchema = z.object({
     .optional(),
 });
 
+export const updateAppointmentSchema = z.object({
+  dateTime: z.coerce
+    .date()
+    .min(new Date(), { error: "Data e hora devem ser no futuro" })
+    .optional(),
+  type: appointmentTypeSchema.default("IN_PERSON").optional(),
+  medicalSpecialty: medicalSpecialtySchema.optional(),
+  status: appointmentStatusSchema.optional(),
+  notes: z
+    .string()
+    .max(500, "Observações devem ter no máximo 500 caracteres")
+    .optional(),
+});
+
 export type CreateAppointmentData = z.infer<typeof createAppointmentSchema>;
+export type UpdateAppointmentData = z.infer<typeof updateAppointmentSchema>;

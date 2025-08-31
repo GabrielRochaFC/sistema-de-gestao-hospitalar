@@ -1,7 +1,11 @@
-import { createAppointmentSchema } from "@/schemas/appointment-schemas";
+import {
+  createAppointmentSchema,
+  updateAppointmentSchema,
+} from "@/schemas/appointment-schemas";
 import {
   cancelAppointment,
   createAppointment,
+  updateAppointment,
 } from "@/services/appointment-service";
 import { Request, Response } from "express";
 
@@ -23,6 +27,18 @@ export class AppointmentController {
     const { appointmentId } = req.params;
 
     const appointment = await cancelAppointment(appointmentId, userId);
+
+    return res.status(200).json(appointment);
+  }
+
+  async updateAppointment(req: Request, res: Response) {
+    const { appointmentId } = req.params;
+
+    const appointmentData = updateAppointmentSchema.parse({
+      ...req.body,
+    });
+
+    const appointment = await updateAppointment(appointmentId, appointmentData);
 
     return res.status(200).json(appointment);
   }

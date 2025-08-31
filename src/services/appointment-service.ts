@@ -1,5 +1,8 @@
 import { prisma } from "@/database/prisma";
-import { CreateAppointmentData } from "@/schemas/appointment-schemas";
+import {
+  CreateAppointmentData,
+  UpdateAppointmentData,
+} from "@/schemas/appointment-schemas";
 import { AppError } from "@/utils/AppError";
 import { AppointmentStatus, AppointmentType } from "generated/prisma";
 
@@ -130,4 +133,26 @@ export async function findAllPatientTelemedicineAppointments(
   }
 
   return appointments;
+}
+
+export async function updateAppointment(
+  appointmentId: string,
+  data: UpdateAppointmentData
+) {
+  const appointment = await prisma.appointment.findUnique({
+    where: { id: appointmentId },
+  });
+
+  if (!appointment) {
+    throw new AppError("Consulta não encontrada", 404);
+  }
+
+  const updatedAppointment = await prisma.appointment.update({
+    where: { id: appointmentId },
+    data: {
+      ...data,
+    },
+  });
+
+  return updatedAppointment;
 }

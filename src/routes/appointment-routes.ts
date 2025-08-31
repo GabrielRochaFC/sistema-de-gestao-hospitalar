@@ -20,4 +20,10 @@ appointmentRoutes.patch(
   appointmentController.cancelAppointment
 );
 
+appointmentRoutes.put(
+  "/:appointmentId",
+  verifyUserAuthorization([Role.PROFESSIONAL, Role.ADMIN]),
+  appointmentController.updateAppointment
+);
+
 export default appointmentRoutes;
