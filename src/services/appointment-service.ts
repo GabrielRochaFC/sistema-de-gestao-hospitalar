@@ -1,7 +1,7 @@
 import { prisma } from "@/database/prisma";
 import { CreateAppointmentData } from "@/schemas/appointment-schemas";
 import { AppError } from "@/utils/AppError";
-import { AppointmentStatus } from "generated/prisma";
+import { AppointmentStatus, AppointmentType } from "generated/prisma";
 
 async function findPatientByUserId(userId: string | undefined) {
   if (!userId) {
@@ -85,4 +85,49 @@ export async function cancelAppointment(
   });
 
   return updatedAppointment;
+}
+
+export async function findAllPatientAppointments(userId: string | undefined) {
+  const patient = await findPatientByUserId(userId);
+
+  const appointments = await prisma.appointment.findMany({
+    where: { patientId: patient.id },
+    orderBy: [
+      {
+        status: "asc",
+      },
+      {
+        dateTime: "asc",
+      },
+    ],
+  });
+
+  return appointments;
+}
+
+export async function findAllPatientTelemedicineAppointments(
+  userId: string | undefined
+) {
+  const patient = await findPatientByUserId(userId);
+
+  const appointments = await prisma.appointment.findMany({
+    where: {
+      patientId: patient.id,
+      type: AppointmentType.TELEMEDICINE,
+    },
+    orderBy: [
+      {
+        status: "asc",
+      },
+      {
+        dateTime: "asc",
+      },
+    ],
+  });
+
+  if (appointments.length === 0) {
+    throw new AppError("Nenhuma teleconsulta encontrada", 404);
+  }
+
+  return appointments;
 }
