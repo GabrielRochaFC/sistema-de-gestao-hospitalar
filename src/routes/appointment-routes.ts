@@ -14,5 +14,10 @@ appointmentRoutes.post(
   verifyUserAuthorization([Role.PATIENT]),
   appointmentController.create
 );
+appointmentRoutes.patch(
+  "/:appointmentId",
+  verifyUserAuthorization([Role.PATIENT]),
+  appointmentController.cancelAppointment
+);
 
 export default appointmentRoutes;
