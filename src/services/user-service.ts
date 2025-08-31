@@ -22,7 +22,7 @@ async function validateUserCreation(email: string, cpf: string) {
   });
 
   if (userWithSameEmail) {
-    throw new AppError("E-mail já cadastrado no sistema", 400);
+    throw new AppError("Usuário já cadastrado no sistema", 400);
   }
 
   const userWithSameCpf = await prisma.user.findUnique({
@@ -30,7 +30,7 @@ async function validateUserCreation(email: string, cpf: string) {
   });
 
   if (userWithSameCpf) {
-    throw new AppError("CPF já cadastrado no sistema", 400);
+    throw new AppError("Usuário já cadastrado no sistema", 400);
   }
 }
 
