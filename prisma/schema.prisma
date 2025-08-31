@@ -65,6 +65,7 @@ model User {
   cpf       String    @unique
   phone     String?
   birthDate DateTime?
+  status    Boolean   @default(true)
 
   role Role[]
 
