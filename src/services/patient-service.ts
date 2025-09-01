@@ -1,6 +1,8 @@
 import { prisma } from "@/database/prisma";
 import { AppError } from "@/utils/AppError";
 import { Patient, Role } from "generated/prisma";
+import { ExamsPaginationData } from "@/schemas/exam-schemas";
+import { listExamsByPatient } from "@/services/exam-service";
 import type { CreatePatientData } from "@/schemas/patient-schemas";
 
 interface CreatePatientResponse {
@@ -58,4 +60,24 @@ export async function createPatient({
   });
 
   return result;
+}
+
+export async function listPatientUserExams(
+  userId: string | undefined,
+  { page, limit }: ExamsPaginationData
+) {
+  if (!userId) {
+    throw new AppError("Usuário não autenticado", 401);
+  }
+
+  const patient = await prisma.patient.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+
+  if (!patient) {
+    throw new AppError("Paciente não encontrado", 404);
+  }
+
+  return listExamsByPatient(patient.id, { page, limit });
 }

@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import { createPatientSchema } from "@/schemas/patient-schemas";
-import { createPatient } from "@/services/patient-service";
+import {
+  createPatient,
+  listPatientUserExams,
+} from "@/services/patient-service";
 import {
   findAllPatientAppointments,
   findAllPatientTelemedicineAppointments,
 } from "@/services/appointment-service";
+import { examsPaginationSchema } from "@/schemas/exam-schemas";
 
 export class PatientController {
   async create(req: Request, res: Response) {
@@ -33,5 +37,12 @@ export class PatientController {
     const appointments = await findAllPatientTelemedicineAppointments(userId);
 
     return res.status(200).json(appointments);
+  }
+
+  async findAllExams(req: Request, res: Response) {
+    const userId = req.user?.id;
+    const { page, limit } = examsPaginationSchema.parse(req.query);
+    const exams = await listPatientUserExams(userId, { page, limit });
+    return res.status(200).json(exams);
   }
 }

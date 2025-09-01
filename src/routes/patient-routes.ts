@@ -21,4 +21,11 @@ patientRoutes.get(
   patientController.findAllTelemedicineAppointments
 );
 
+patientRoutes.get(
+  "/exams",
+  ensureAuthenticated,
+  verifyUserAuthorization([Role.PATIENT]),
+  patientController.findAllExams
+);
+
 export { patientRoutes };

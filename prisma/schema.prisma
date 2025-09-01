@@ -75,6 +75,27 @@ enum AdmissionStatus {
   CANCELED
 }
 
+enum ExamStatus {
+  REQUESTED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum ExamType {
+  BLOOD_TEST
+  URINE_TEST
+  IMAGING
+  XRAY
+  MRI
+  CT
+  ULTRASOUND
+  ECG
+  BIOPSY
+  OTHER
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -110,6 +131,7 @@ model Patient {
 
   appointments Appointment[]
   admissions   Admission[]
+  exams        Exam[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,6 +150,7 @@ model Professional {
 
   appointments Appointment[]
   units        HospitalUnit[]
+  exams        Exam[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,6 +205,7 @@ model HospitalUnit {
   beds          Bed[]
   appointments  Appointment[]
   admissions    Admission[]
+  exams         Exam[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -217,7 +241,7 @@ model Admission {
   patient   Patient @relation(fields: [patientId], references: [id])
   patientId String
 
-  bed   Bed @relation(fields: [bedId], references: [id])
+  bed   Bed    @relation(fields: [bedId], references: [id])
   bedId String
 
   unit   HospitalUnit @relation(fields: [unitId], references: [id])
@@ -230,4 +254,33 @@ model Admission {
   @@index([patientId])
   @@index([unitId])
   @@map("admissions")
+}
+
+model Exam {
+  id            String     @id @default(uuid())
+  type          ExamType
+  status        ExamStatus @default(REQUESTED)
+  requestDate   DateTime   @default(now())
+  scheduledDate DateTime?
+  completedDate DateTime?
+  resultText    String?
+  notes         String?
+
+  patient   Patient @relation(fields: [patientId], references: [id])
+  patientId String
+
+  professional   Professional? @relation(fields: [professionalId], references: [id])
+  professionalId String?
+
+  unit   HospitalUnit @relation(fields: [unitId], references: [id])
+  unitId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([patientId])
+  @@index([unitId])
+  @@index([type])
+  @@map("exams")
 }
