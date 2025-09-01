@@ -8,6 +8,8 @@ import { bedRoutes } from "./bed-routes";
 import appointmentRoutes from "./appointment-routes";
 import { admissionRoutes } from "./admission-routes";
 import { examRoutes } from "./exam-routes";
+import { clinicalNoteRoutes } from "./clinical-note-routes";
+import { prescriptionRoutes } from "./prescription-routes";
 
 const routes = Router();
 
@@ -20,5 +22,7 @@ routes.use("/hospital-units", hospitalUnitRoutes);
 routes.use("/beds", bedRoutes);
 routes.use("/admissions", admissionRoutes);
 routes.use("/exams", examRoutes);
+routes.use("/clinical-notes", clinicalNoteRoutes);
+routes.use("/prescriptions", prescriptionRoutes);
 
 export { routes };

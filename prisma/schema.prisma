@@ -96,6 +96,19 @@ enum ExamType {
   OTHER
 }
 
+// === Novos Enums para Prontuário Clínico ===
+// === Enums simplificados para histórico clínico ===
+enum ClinicalNoteType {
+  PROGRESS
+  VITAL_SIGN
+  OTHER
+}
+
+enum PrescriptionStatus {
+  ACTIVE
+  CANCELED
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -129,9 +142,11 @@ model Patient {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
 
-  appointments Appointment[]
-  admissions   Admission[]
-  exams        Exam[]
+  appointments  Appointment[]
+  admissions    Admission[]
+  exams         Exam[]
+  clinicalNotes ClinicalNote[]
+  prescriptions Prescription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -148,9 +163,11 @@ model Professional {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique
 
-  appointments Appointment[]
-  units        HospitalUnit[]
-  exams        Exam[]
+  appointments  Appointment[]
+  units         HospitalUnit[]
+  exams         Exam[]
+  clinicalNotes ClinicalNote[]
+  prescriptions Prescription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -283,4 +300,60 @@ model Exam {
   @@index([unitId])
   @@index([type])
   @@map("exams")
+}
+
+model ClinicalNote {
+  id             String           @id @default(uuid())
+  patient        Patient          @relation(fields: [patientId], references: [id])
+  patientId      String
+  professional   Professional?    @relation(fields: [professionalId], references: [id])
+  professionalId String?
+  type           ClinicalNoteType @default(PROGRESS)
+  content        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([patientId])
+  @@index([professionalId])
+  @@map("clinical_notes")
+}
+
+model Prescription {
+  id             String             @id @default(uuid())
+  patient        Patient            @relation(fields: [patientId], references: [id])
+  patientId      String
+  professional   Professional?      @relation(fields: [professionalId], references: [id])
+  professionalId String?
+  status         PrescriptionStatus @default(ACTIVE)
+  notes          String?
+  issuedAt       DateTime           @default(now())
+  validUntil     DateTime?
+
+  items PrescriptionItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([patientId])
+  @@index([professionalId])
+  @@index([status])
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id             String       @id @default(uuid())
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+  prescriptionId String
+  medicationName String
+  instructions   String?
+  dosage         String?
+  frequency      String?
+  quantity       Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([prescriptionId])
+  @@map("prescription_items")
 }

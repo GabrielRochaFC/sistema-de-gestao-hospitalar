@@ -9,6 +9,11 @@ import {
   findAllPatientTelemedicineAppointments,
 } from "@/services/appointment-service";
 import { examsPaginationSchema } from "@/schemas/exam-schemas";
+import { paginationSchema } from "@/schemas/pagination-schemas";
+import {
+  listPatientUserClinicalNotes,
+  listPatientUserPrescriptions,
+} from "@/services/patient-service";
 
 export class PatientController {
   async create(req: Request, res: Response) {
@@ -44,5 +49,22 @@ export class PatientController {
     const { page, limit } = examsPaginationSchema.parse(req.query);
     const exams = await listPatientUserExams(userId, { page, limit });
     return res.status(200).json(exams);
+  }
+
+  async findAllClinicalNotes(req: Request, res: Response) {
+    const userId = req.user?.id;
+    const { page, limit } = paginationSchema.parse(req.query);
+    const notes = await listPatientUserClinicalNotes(userId, { page, limit });
+    return res.status(200).json(notes);
+  }
+
+  async findAllPrescriptions(req: Request, res: Response) {
+    const userId = req.user?.id;
+    const { page, limit } = paginationSchema.parse(req.query);
+    const prescriptions = await listPatientUserPrescriptions(userId, {
+      page,
+      limit,
+    });
+    return res.status(200).json(prescriptions);
   }
 }

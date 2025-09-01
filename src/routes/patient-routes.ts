@@ -28,4 +28,18 @@ patientRoutes.get(
   patientController.findAllExams
 );
 
+patientRoutes.get(
+  "/clinical-notes",
+  ensureAuthenticated,
+  verifyUserAuthorization([Role.PATIENT]),
+  (req, res) => patientController.findAllClinicalNotes(req, res)
+);
+
+patientRoutes.get(
+  "/prescriptions",
+  ensureAuthenticated,
+  verifyUserAuthorization([Role.PATIENT]),
+  (req, res) => patientController.findAllPrescriptions(req, res)
+);
+
 export { patientRoutes };

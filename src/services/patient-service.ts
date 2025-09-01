@@ -3,6 +3,10 @@ import { AppError } from "@/utils/AppError";
 import { Patient, Role } from "generated/prisma";
 import { ExamsPaginationData } from "@/schemas/exam-schemas";
 import { listExamsByPatient } from "@/services/exam-service";
+import { listClinicalNotesByPatient } from "@/services/clinical-note-service";
+import { listPrescriptionsByPatient } from "@/services/prescription-service";
+import { ClinicalNotePaginationData } from "@/schemas/clinical-schemas";
+import { PrescriptionPaginationData } from "@/schemas/prescription-schemas";
 import type { CreatePatientData } from "@/schemas/patient-schemas";
 
 interface CreatePatientResponse {
@@ -80,4 +84,30 @@ export async function listPatientUserExams(
   }
 
   return listExamsByPatient(patient.id, { page, limit });
+}
+
+async function findPatientIdByUserId(userId: string | undefined) {
+  if (!userId) throw new AppError("Usuário não autenticado", 401);
+  const patient = await prisma.patient.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+  if (!patient) throw new AppError("Paciente não encontrado", 404);
+  return patient.id;
+}
+
+export async function listPatientUserClinicalNotes(
+  userId: string | undefined,
+  { page, limit }: ClinicalNotePaginationData
+) {
+  const patientId = await findPatientIdByUserId(userId);
+  return listClinicalNotesByPatient(patientId, { page, limit });
+}
+
+export async function listPatientUserPrescriptions(
+  userId: string | undefined,
+  { page, limit }: PrescriptionPaginationData
+) {
+  const patientId = await findPatientIdByUserId(userId);
+  return listPrescriptionsByPatient(patientId, { page, limit });
 }
