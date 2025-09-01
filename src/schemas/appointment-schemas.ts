@@ -19,6 +19,7 @@ export const createAppointmentSchema = z.object({
     .min(new Date(), { error: "Data e hora devem ser no futuro" }),
   type: appointmentTypeSchema.default("IN_PERSON"),
   medicalSpecialty: medicalSpecialtySchema,
+  unitId: z.coerce.number().int().positive("ID da unidade inválido"),
   notes: z
     .string()
     .max(500, "Observações devem ter no máximo 500 caracteres")
@@ -33,6 +34,7 @@ export const updateAppointmentSchema = z.object({
   type: appointmentTypeSchema.default("IN_PERSON").optional(),
   medicalSpecialty: medicalSpecialtySchema.optional(),
   status: appointmentStatusSchema.optional(),
+  unitId: z.coerce.number().int().positive("ID da unidade inválido").optional(),
   notes: z
     .string()
     .max(500, "Observações devem ter no máximo 500 caracteres")

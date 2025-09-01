@@ -27,14 +27,23 @@ export async function createAppointment({
   dateTime,
   type,
   medicalSpecialty,
+  unitId,
   notes,
 }: CreateAppointmentData) {
   const patient = await findPatientByUserId(userId);
+
+  const unit = await prisma.hospitalUnit.findUnique({ where: { id: unitId } });
+  if (!unit) {
+    throw new AppError("Unidade hospitalar não encontrada", 404);
+  }
 
   const doctor = await prisma.professional.findFirst({
     where: {
       specialties: {
         hasSome: [medicalSpecialty],
+      },
+      units: {
+        some: { id: unitId },
       },
     },
   });
@@ -52,6 +61,7 @@ export async function createAppointment({
       professionalId: doctor.id,
       dateTime,
       type,
+      unitId,
       notes,
     },
   });
@@ -147,11 +157,30 @@ export async function updateAppointment(
     throw new AppError("Consulta não encontrada", 404);
   }
 
+  if (data.unitId) {
+    const unit = await prisma.hospitalUnit.findUnique({
+      where: { id: data.unitId },
+    });
+    if (!unit) {
+      throw new AppError("Unidade hospitalar não encontrada", 404);
+    }
+    const professionalWorksThere = await prisma.hospitalUnit.findFirst({
+      where: {
+        id: data.unitId,
+        professionals: { some: { id: appointment.professionalId } },
+      },
+    });
+    if (!professionalWorksThere) {
+      throw new AppError(
+        "O profissional da consulta não está associado à nova unidade",
+        400
+      );
+    }
+  }
+
   const updatedAppointment = await prisma.appointment.update({
     where: { id: appointmentId },
-    data: {
-      ...data,
-    },
+    data: { ...data },
   });
 
   return updatedAppointment;

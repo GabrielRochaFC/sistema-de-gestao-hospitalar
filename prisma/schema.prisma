@@ -56,6 +56,19 @@ enum AppointmentType {
   TELEMEDICINE
 }
 
+enum BedStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum UnitType {
+  HOSPITAL
+  CLINIC
+  LABORATORY
+  HOME_CARE
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -107,6 +120,7 @@ model Professional {
   userId String @unique
 
   appointments Appointment[]
+  units        HospitalUnit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,6 +142,9 @@ model Appointment {
   professional   Professional @relation(fields: [professionalId], references: [id])
   professionalId String
 
+  unit   HospitalUnit @relation(fields: [unitId], references: [id])
+  unitId Int
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -146,4 +163,36 @@ model Address {
 
   patient   Patient? @relation(fields: [patientId], references: [id])
   patientId String?  @unique
+}
+
+model HospitalUnit {
+  id    Int      @id @default(autoincrement())
+  name  String
+  type  UnitType
+  phone String?
+
+  professionals Professional[]
+  beds          Bed[]
+  appointments  Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("hospital_units")
+}
+
+model Bed {
+  id     String    @id @default(uuid())
+  code   String    @unique
+  status BedStatus @default(AVAILABLE)
+
+  unit   HospitalUnit @relation(fields: [unitId], references: [id])
+  unitId Int
+
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("beds")
 }
