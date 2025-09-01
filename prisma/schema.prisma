@@ -69,6 +69,12 @@ enum UnitType {
   HOME_CARE
 }
 
+enum AdmissionStatus {
+  ACTIVE
+  DISCHARGED
+  CANCELED
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -103,6 +109,7 @@ model Patient {
   userId String @unique
 
   appointments Appointment[]
+  admissions   Admission[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,6 +181,7 @@ model HospitalUnit {
   professionals Professional[]
   beds          Bed[]
   appointments  Appointment[]
+  admissions    Admission[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -191,8 +199,35 @@ model Bed {
 
   deletedAt DateTime?
 
+  admissions Admission[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("beds")
+}
+
+model Admission {
+  id        String          @id @default(uuid())
+  reason    String
+  startDate DateTime        @default(now())
+  endDate   DateTime?
+  status    AdmissionStatus @default(ACTIVE)
+
+  patient   Patient @relation(fields: [patientId], references: [id])
+  patientId String
+
+  bed   Bed @relation(fields: [bedId], references: [id])
+  bedId String
+
+  unit   HospitalUnit @relation(fields: [unitId], references: [id])
+  unitId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([patientId])
+  @@index([unitId])
+  @@map("admissions")
 }

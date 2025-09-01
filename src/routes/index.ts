@@ -6,6 +6,7 @@ import { userRoutes } from "./user-routes";
 import { hospitalUnitRoutes } from "./hospital-unit-routes";
 import { bedRoutes } from "./bed-routes";
 import appointmentRoutes from "./appointment-routes";
+import { admissionRoutes } from "./admission-routes";
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use("/users", userRoutes);
 routes.use("/appointments", appointmentRoutes);
 routes.use("/hospital-units", hospitalUnitRoutes);
 routes.use("/beds", bedRoutes);
+routes.use("/admissions", admissionRoutes);
 
 export { routes };
