@@ -5,6 +5,10 @@ import {
 } from "@/schemas/appointment-schemas";
 import { AppError } from "@/utils/AppError";
 import { AppointmentStatus, AppointmentType } from "generated/prisma";
+import {
+  PaginationData,
+  PaginatedResponse,
+} from "@/schemas/pagination-schemas";
 
 async function findPatientByUserId(userId: string | undefined) {
   if (!userId) {
@@ -184,4 +188,68 @@ export async function updateAppointment(
   });
 
   return updatedAppointment;
+}
+
+async function findProfessionalByUserId(userId: string | undefined) {
+  if (!userId) {
+    throw new AppError("Usuário não encontrado", 404);
+  }
+
+  const professional = await prisma.professional.findUnique({
+    where: { userId },
+  });
+
+  if (!professional) {
+    throw new AppError("Profissional não encontrado", 404);
+  }
+
+  return professional;
+}
+
+export async function findAllProfessionalAppointments(
+  userId: string | undefined,
+  { page, limit }: PaginationData
+): Promise<PaginatedResponse<any>> {
+  const professional = await findProfessionalByUserId(userId);
+
+  const skip = (page - 1) * limit;
+
+  const [appointments, total] = await Promise.all([
+    prisma.appointment.findMany({
+      where: { professionalId: professional.id },
+      orderBy: [{ status: "asc" }, { dateTime: "asc" }],
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        dateTime: true,
+        status: true,
+        type: true,
+        notes: true,
+        telemedicineUrl: true,
+        patient: {
+          select: {
+            id: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+        unit: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.appointment.count({ where: { professionalId: professional.id } }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    data: appointments,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalItems: total,
+      itemsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
 }
