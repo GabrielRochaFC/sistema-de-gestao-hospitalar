@@ -169,6 +169,73 @@ async function getUpdatableExam(id: string) {
   return exam;
 }
 
+async function findProfessionalByUserId(userId: string | undefined) {
+  if (!userId) throw new AppError("Usuário não encontrado", 404);
+  const professional = await prisma.professional.findUnique({
+    where: { userId },
+  });
+  if (!professional) throw new AppError("Profissional não encontrado", 404);
+  return professional;
+}
+
+export async function listExamsForProfessional(
+  userId: string | undefined,
+  { page, limit }: ExamsPaginationData
+): Promise<PaginatedResponse<any>> {
+  const professional = await findProfessionalByUserId(userId);
+  const skip = (page - 1) * limit;
+
+  const where = {
+    professionalId: professional.id,
+    status: {
+      in: [ExamStatus.REQUESTED, ExamStatus.SCHEDULED, ExamStatus.IN_PROGRESS],
+    },
+  };
+
+  const [exams, total] = await Promise.all([
+    prisma.exam.findMany({
+      where,
+      orderBy: [
+        { status: "asc" },
+        { scheduledDate: "asc" },
+        { requestDate: "desc" },
+      ],
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        requestDate: true,
+        scheduledDate: true,
+        completedDate: true,
+        notes: true,
+        patient: {
+          select: {
+            id: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+        unit: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.exam.count({ where }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+  return {
+    data: exams,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalItems: total,
+      itemsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
+
 export async function scheduleExam(id: string, data: ScheduleExamData) {
   const exam = await getUpdatableExam(id);
 

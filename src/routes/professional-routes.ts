@@ -20,4 +20,11 @@ professionalRoutes.get(
   professionalController.findAllAppointments
 );
 
+professionalRoutes.get(
+  "/exams",
+  ensureAuthenticated,
+  verifyUserAuthorization([Role.PROFESSIONAL]),
+  professionalController.findAllExams
+);
+
 export { professionalRoutes };
