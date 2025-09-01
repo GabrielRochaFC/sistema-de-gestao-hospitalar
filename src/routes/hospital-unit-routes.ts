@@ -29,4 +29,16 @@ hospitalUnitRoutes.post(
   hospitalUnitController.addProfessional
 );
 
+hospitalUnitRoutes.get(
+  "/:id/professionals",
+  verifyUserAuthorization([Role.ADMIN, Role.PROFESSIONAL]),
+  hospitalUnitController.professionals
+);
+
+hospitalUnitRoutes.get(
+  "/:id/appointments",
+  verifyUserAuthorization([Role.ADMIN, Role.PROFESSIONAL]),
+  hospitalUnitController.appointments
+);
+
 export { hospitalUnitRoutes };

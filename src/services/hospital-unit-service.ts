@@ -127,3 +127,99 @@ export async function addProfessionalToUnit(
 
   return { message: "Profissional adicionado à unidade com sucesso" };
 }
+
+export async function listUnitProfessionals(
+  unitId: number,
+  { page, limit }: PaginationData
+) {
+  const unit = await prisma.hospitalUnit.findUnique({ where: { id: unitId } });
+  if (!unit) {
+    throw new AppError("Unidade não encontrada", 404);
+  }
+
+  const skip = (page - 1) * limit;
+  const [professionals, total] = await Promise.all([
+    prisma.professional.findMany({
+      where: { units: { some: { id: unitId } } },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        licenseNumber: true,
+        type: true,
+        specialties: true,
+        user: { select: { firstName: true, lastName: true, email: true } },
+      },
+    }),
+    prisma.professional.count({ where: { units: { some: { id: unitId } } } }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+  return {
+    data: professionals,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalItems: total,
+      itemsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
+
+export async function listUnitAppointments(
+  unitId: number,
+  { page, limit }: PaginationData
+) {
+  const unit = await prisma.hospitalUnit.findUnique({ where: { id: unitId } });
+  if (!unit) {
+    throw new AppError("Unidade não encontrada", 404);
+  }
+
+  const skip = (page - 1) * limit;
+  const [appointments, total] = await Promise.all([
+    prisma.appointment.findMany({
+      where: { unitId },
+      orderBy: [{ status: "asc" }, { dateTime: "asc" }],
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        dateTime: true,
+        status: true,
+        type: true,
+        notes: true,
+        telemedicineUrl: true,
+        patient: {
+          select: {
+            id: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+        professional: {
+          select: {
+            id: true,
+            specialties: true,
+            user: { select: { firstName: true, lastName: true } },
+          },
+        },
+      },
+    }),
+    prisma.appointment.count({ where: { unitId } }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+  return {
+    data: appointments,
+    pagination: {
+      currentPage: page,
+      totalPages,
+      totalItems: total,
+      itemsPerPage: limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}

@@ -10,6 +10,8 @@ import {
   updateHospitalUnit,
   listHospitalUnits,
   addProfessionalToUnit,
+  listUnitProfessionals,
+  listUnitAppointments,
 } from "@/services/hospital-unit-service";
 import { paginationSchema } from "@/schemas/pagination-schemas";
 
@@ -37,6 +39,20 @@ export class HospitalUnitController {
     const unitId = getHospitalUnitSchema.parse(req.params.id);
     const data = addProfessionalToUnitSchema.parse(req.body);
     const result = await addProfessionalToUnit(unitId, data);
+    return res.status(200).json(result);
+  }
+
+  async professionals(req: Request, res: Response) {
+    const unitId = getHospitalUnitSchema.parse(req.params.id);
+    const pagination = paginationSchema.parse(req.query);
+    const result = await listUnitProfessionals(unitId, pagination);
+    return res.status(200).json(result);
+  }
+
+  async appointments(req: Request, res: Response) {
+    const unitId = getHospitalUnitSchema.parse(req.params.id);
+    const pagination = paginationSchema.parse(req.query);
+    const result = await listUnitAppointments(unitId, pagination);
     return res.status(200).json(result);
   }
 }
