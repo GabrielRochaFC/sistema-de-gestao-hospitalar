@@ -144,7 +144,7 @@ npm run dev
 
 ## Rotas da API
 
-Montadas em `src/routes/index.ts`.
+Montadas em `src/routes/index.ts`. Caso queira visualizar as rotas no insomnia, importe o arquivo `rotas_insomnia.yaml` no seu workspace do Insomnia.
 
 ### Convenções
 

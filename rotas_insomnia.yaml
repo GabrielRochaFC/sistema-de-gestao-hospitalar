@@ -1,0 +1,1857 @@
+type: collection.insomnia.rest/5.0
+name: SGHSS
+meta:
+  id: wrk_f67f9a4dec8c4a7c8b44949bda17bfe4
+  created: 1756420579896
+  modified: 1756420593535
+collection:
+  - name: Autenticação
+    meta:
+      id: fld_dffcb08c7b7741808c805a510304357c
+      created: 1756420602929
+      modified: 1756750694298
+      sortKey: -1756750685531
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/login"
+        name: Login
+        meta:
+          id: req_57a51883f8f245009fc56871e63693f6
+          created: 1756420579938
+          modified: 1756770710528
+          isPrivate: false
+          sortKey: -1756420606852
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "gabriel@exemplo.com",
+            	"password": "Senha@123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/register"
+        name: Register
+        meta:
+          id: req_7ea082569c4d469f805caaa06ecd6bea
+          created: 1756517390366
+          modified: 1756752462865
+          isPrivate: false
+          sortKey: -1756517390366
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"firstName": "Doutor",
+            	"lastName": "Pimpolho",
+            	"email": "doutor.pimpolho@exemplo.com",
+            	"password": "Senha@123",
+            	"cpf": "934.536.950-38",
+            	"phone": "99 91234-4323",
+            	"birthDate": "{% faker 'randomDatePast' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    environment:
+      RESOURCE: auth
+  - name: Paciente
+    meta:
+      id: fld_4c8f8a2b97bf4969bb32a40166c68368
+      created: 1756440516800
+      modified: 1756750702214
+      sortKey: -1756750685456
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Criar paciente
+        meta:
+          id: req_0eba58e722a04299877e6e949d8041a7
+          created: 1756440544098
+          modified: 1756658869957
+          isPrivate: false
+          sortKey: -1756440544098
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	  "address": {
+                "street": "{% faker 'randomStreetAddress' %}",
+                "number": "{% faker 'randomAlphaNumeric' %}",
+                "complement": "{% faker 'randomStreetName' %}",
+                "city": "{% faker 'randomCity' %}",
+                "state": "SP",
+                "zipCode": "12345-678",
+                "country": "Brazil"
+              },
+              "healthPlan": "Unimed",
+              "allergies": ["Amendoim", "Lactose"],
+              "bloodType": "O+",
+              "emergencyContact": "11 98765 4321"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/appointments"
+        name: Agendar consulta
+        meta:
+          id: req_ab031a9b101c4d0db5da35278541b114
+          created: 1756658911191
+          modified: 1756753003012
+          isPrivate: false
+          sortKey: -1756440544298
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"medicalSpecialty": "DERMATOLOGY",
+            	"type": "IN_PERSON",
+            	"dateTime": "{% faker 'randomDateFuture' %}",
+            	"unitId": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/appointments/:appointmentId"
+        name: Cancelar consulta
+        meta:
+          id: req_831d734ec67346438bf676f05d40310e
+          created: 1756662354626
+          modified: 1756662680719
+          isPrivate: false
+          sortKey: -1756440544198
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: appointmentId
+            value: b7fef0a5-c8f9-416d-9a5b-e53ef5ca214c
+      - url: "{{BASE_URL}}/{{ _.RESOURCE }}/appointments"
+        name: Buscar todas consultas
+        meta:
+          id: req_49d390849e7e4b1888201f3e31c223d8
+          created: 1756664031570
+          modified: 1756664061066
+          isPrivate: false
+          sortKey: -1756440544248
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{ _.RESOURCE }}/appointments/telemedicine"
+        name: Buscar todas teleconsultas
+        meta:
+          id: req_1d38c271f4ee4a1a995a23ee90e5a0a4
+          created: 1756664463723
+          modified: 1756664472555
+          isPrivate: false
+          sortKey: -1756440544223
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{ _.RESOURCE }}/exams"
+        name: Buscar todos exames
+        meta:
+          id: req_b2d5ae6fe20646f0bd2a494c07cd5bc6
+          created: 1756765703796
+          modified: 1756765727654
+          isPrivate: false
+          sortKey: -1756440544235.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{ _.RESOURCE }}/clinical-notes"
+        name: Buscar histórico clinico
+        meta:
+          id: req_87fbd6d00c0e49299b15527f64fe2689
+          created: 1756769417552
+          modified: 1756769452697
+          isPrivate: false
+          sortKey: -1756440544210.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{ _.RESOURCE }}/prescriptions"
+        name: Buscar prescrições médicas
+        meta:
+          id: req_de7a8e1ea138489b906c6960e5b2d832
+          created: 1756769467233
+          modified: 1756770423016
+          isPrivate: false
+          sortKey: -1756440544204.25
+        method: GET
+        parameters:
+          - id: pair_37006cca134d41e9b56950762c39ec61
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_4ed0a8fabffa457d8984ea2f8ad42555
+            name: limit
+            value: "5"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    environment:
+      RESOURCE: patients
+  - name: Profissional
+    meta:
+      id: fld_eff3cbb486d8469d8ed19ab1cceb313c
+      created: 1756500194047
+      modified: 1756750707117
+      sortKey: -1756750685443.5
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Criar profissional
+        meta:
+          id: req_153eaf2a62254dd8ad3b43b3b7085963
+          created: 1756500194049
+          modified: 1756659876338
+          isPrivate: false
+          sortKey: -1756440544098
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"type": "DOCTOR",
+            	"specialties": [
+                "GENERAL_PRACTICE",
+                "CARDIOLOGY",
+                "DERMATOLOGY",
+                "EMERGENCY_MEDICINE",
+                "FAMILY_MEDICINE",
+                "INTERNAL_MEDICINE",
+                "NEUROLOGY",
+                "OBSTETRICS_GYNECOLOGY",
+                "ONCOLOGY",
+                "ORTHOPEDICS",
+                "PEDIATRICS",
+                "PSYCHIATRY",
+                "RADIOLOGY",
+                "SURGERY",
+                "UROLOGY"
+              ],
+            	"licenseNumber": "5433122"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/appointments"
+        name: Buscar todas consultas do profissional
+        meta:
+          id: req_3b04de92cb9b478587b65961f0787e30
+          created: 1756754206460
+          modified: 1756754292742
+          isPrivate: false
+          sortKey: -1756754206460
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/exams"
+        name: Buscar todos exames do profissional
+        meta:
+          id: req_b137a476cf2d46f69fdf7aa622519aea
+          created: 1756766535785
+          modified: 1756766800208
+          isPrivate: false
+          sortKey: -1756752923975.5
+        method: GET
+        parameters:
+          - id: pair_3b695a6e20ea49118f54f1eefbaad133
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_3079f2b7c9ae4c4d8a760e270c2351bc
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    environment:
+      RESOURCE: professionals
+  - name: Usuário
+    meta:
+      id: fld_d2b7df58822e4522b08dbf85f5981dfc
+      created: 1756580639501
+      modified: 1756750699267
+      sortKey: -1756750685481
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}/me"
+        name: Buscar usuário autenticado
+        meta:
+          id: req_6cb8d949f18a42c69dbf06c48182229e
+          created: 1756580643181
+          modified: 1756658830477
+          isPrivate: false
+          sortKey: -1756567300790.336
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:id"
+        name: Buscar usuário por id
+        meta:
+          id: req_295920ca72b54915935c122473b2b71a
+          created: 1756581083052
+          modified: 1756658806400
+          isPrivate: false
+          sortKey: -1756572736579.125
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: d2989c97-306f-47ab-9860-1bcf483466be
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Buscar todos usuários ativos
+        meta:
+          id: req_8445125417e845539e3752d28ccced69
+          created: 1756585492279
+          modified: 1756751436179
+          isPrivate: false
+          sortKey: -1756568783278.1875
+        method: GET
+        parameters:
+          - id: pair_a7ef6676431d464ea4b3bb1051778a96
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_8024c5bb80814161a2d7425780e1f406
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/me"
+        name: Atualizar usuário autenticado
+        meta:
+          id: req_e0816d81f4754458a2a788eeccb14959
+          created: 1756586203383
+          modified: 1756658853056
+          isPrivate: false
+          sortKey: -1756549016773.5
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"phone": "61912341235"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:id"
+        name: Atualizar usuário
+        meta:
+          id: req_36923483121542c4abf6933e2f7e2e01
+          created: 1756586940268
+          modified: 1756658837890
+          isPrivate: false
+          sortKey: -1756556923375.375
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"lastName": "Rocha"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: b7fd22ca-0791-4e15-af83-fe51652e5c15
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:id"
+        name: Deletar usuário por id
+        meta:
+          id: req_a51ccac0e2a1414e8731c312e92b81ff
+          created: 1756587115771
+          modified: 1756658860180
+          isPrivate: false
+          sortKey: -1756541110171.625
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: d2989c97-306f-47ab-9860-1bcf483466be
+      - url: "{{BASE_URL}}/{{RESOURCE}}/all"
+        name: Buscar todos os usuários
+        meta:
+          id: req_b6adb350dd8f40178f03b7edae0310a3
+          created: 1756601758049
+          modified: 1756751411916
+          isPrivate: false
+          sortKey: -1756567794952.9531
+        method: GET
+        parameters:
+          - id: pair_a7ef6676431d464ea4b3bb1051778a96
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_8024c5bb80814161a2d7425780e1f406
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:id/status"
+        name: Atualizar status do usuário
+        meta:
+          id: req_36fe48e708334c49bd633b2f8cd35ecd
+          created: 1756601934596
+          modified: 1756658845118
+          isPrivate: false
+          sortKey: -1756552970074.4375
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"status": true
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: d2989c97-306f-47ab-9860-1bcf483466be
+    environment:
+      RESOURCE: users
+  - name: Consulta
+    meta:
+      id: fld_3c4e94a73be14cd1aa2cc88fc2fab14a
+      created: 1756658789392
+      modified: 1756765044675
+      sortKey: -1756750685437.836
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:appointmentId"
+        name: Atualizar consulta
+        meta:
+          id: req_ee3ceae4d4c941e38bb7a3f0abd42ef1
+          created: 1756676585377
+          modified: 1756676930354
+          isPrivate: false
+          sortKey: -1756676585377
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"telemedicineUrl": "{% faker 'randomUrl' %}",
+            	"type": "TELEMEDICINE",
+            	"notes": "Consulta pelo google meets",
+            	"status": "SCHEDULED"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: appointmentId
+            value: b7fef0a5-c8f9-416d-9a5b-e53ef5ca214c
+    environment:
+      RESOURCE: appointments
+  - name: Unidade Hospitalar
+    meta:
+      id: fld_11c9416f7e9447768f492ca6dfd3bc3f
+      created: 1756750685430
+      modified: 1756751613091
+      sortKey: -1756750685440.375
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}"
+        name: Criar unidade hospitalar
+        meta:
+          id: req_e1d883d16cd743d9849ae6195e00b567
+          created: 1756750731467
+          modified: 1756750978857
+          isPrivate: false
+          sortKey: -1756750731468
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "Hospital Vida Plus",
+            	"type": "HOSPITAL",
+            	"phone": "(65) 2871-8521"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id"
+        name: Atualizar unidade hospitalar
+        meta:
+          id: req_632680a3340846c2a770ac842123a8d7
+          created: 1756751045910
+          modified: 1756751232687
+          isPrivate: false
+          sortKey: -1756713658422.5
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "Hospital Vida Plus",
+            	"type": "HOSPITAL",
+            	"phone": "(65) 2345-1234"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "1"
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}"
+        name: Buscar unidades hospitalares
+        meta:
+          id: req_a94af687fb074b61967d50a990d95c32
+          created: 1756751292941
+          modified: 1756751525208
+          isPrivate: false
+          sortKey: -1756732194945.25
+        method: GET
+        parameters:
+          - id: pair_ba613f8dd94440bc9caa03398674518e
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_709fa7f638be4b8e82c4e58456f87d34
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:unitId/professionals"
+        name: Adicionar profissional a unidade hospitalar
+        meta:
+          id: req_852d5baf46d14aaca2b4f6c52b36c06e
+          created: 1756752748084
+          modified: 1756752856073
+          isPrivate: false
+          sortKey: -1756741463206.625
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"professionalId": "bafc065a-cf36-46f2-9e53-046fa110f76f"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: unitId
+            value: "1"
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:unitId/professionals"
+        name: Buscar todos profissionais da unidade hospitalar
+        meta:
+          id: req_b7ccd4d51e42460a8a7cc7336998282e
+          created: 1756753486267
+          modified: 1756753533274
+          isPrivate: false
+          sortKey: -1756722926683.875
+        method: GET
+        parameters:
+          - id: pair_ba613f8dd94440bc9caa03398674518e
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_709fa7f638be4b8e82c4e58456f87d34
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: unitId
+            value: "1"
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:unitId/appointments"
+        name: Buscar todas consultas da unidade hospitalar
+        meta:
+          id: req_adfca28cdf274c0b9ac9fe226543bff2
+          created: 1756753547334
+          modified: 1756753552252
+          isPrivate: false
+          sortKey: -1756718292553.1875
+        method: GET
+        parameters:
+          - id: pair_ba613f8dd94440bc9caa03398674518e
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_709fa7f638be4b8e82c4e58456f87d34
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: unitId
+            value: "1"
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:unitId/admissions"
+        name: Buscar todas internações da unidade hospitalar
+        meta:
+          id: req_40b602ff6d2e4df0b5c441be62a1fa0d
+          created: 1756756849167
+          modified: 1756757124045
+          isPrivate: false
+          sortKey: -1756715975487.8438
+        method: GET
+        parameters:
+          - id: pair_ba613f8dd94440bc9caa03398674518e
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_709fa7f638be4b8e82c4e58456f87d34
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: unitId
+            value: "1"
+    environment:
+      RESOURCE: hospital-units
+  - name: Leitos
+    meta:
+      id: fld_3f8d46e9e09a477d8e7b803ab0c383aa
+      created: 1756751597151
+      modified: 1756751908753
+      sortKey: -1756750685438.8125
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}"
+        name: Criar leito
+        meta:
+          id: req_30358856b4cf44dfb9080fd3f9f47cc3
+          created: 1756751641491
+          modified: 1756756134983
+          isPrivate: false
+          sortKey: -1756751641491
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"code": "A102",
+            	"unitId": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id"
+        name: Buscar leito por Id
+        meta:
+          id: req_619f07ff2196413cad312a22a5e49f05
+          created: 1756751927226
+          modified: 1756752066854
+          isPrivate: false
+          sortKey: -1756751186479.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 476c3dc3-47f3-47ef-8ef2-254adda4bdd2
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/unit/:hospitalUnitId"
+        name: Buscar leitos por unidade hospitalar
+        meta:
+          id: req_39e7c9855a834faf94651de3b84d593f
+          created: 1756751976672
+          modified: 1756756121560
+          isPrivate: false
+          sortKey: -1756751158041.2812
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: hospitalUnitId
+            value: "1"
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id"
+        name: Atualizar leito por Id
+        meta:
+          id: req_3ffcbe6226784379899cb6b61e6e6310
+          created: 1756752148911
+          modified: 1756752351343
+          isPrivate: false
+          sortKey: -1756751143822.1719
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"status": "MAINTENANCE"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 476c3dc3-47f3-47ef-8ef2-254adda4bdd2
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id"
+        name: Deletar leito por Id
+        meta:
+          id: req_4a240fbb7cf444e3b99d6e7c4295287b
+          created: 1756752279429
+          modified: 1756752287076
+          isPrivate: false
+          sortKey: -1756751129603.0625
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+            'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+          disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 476c3dc3-47f3-47ef-8ef2-254adda4bdd2
+    environment:
+      RESOURCE: beds
+  - name: Internações
+    meta:
+      id: fld_ddd542e34a4f472eb69b09eb6424457c
+      created: 1756755846684
+      modified: 1756755978280
+      sortKey: -1756750685438.0312
+    children:
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}"
+        name: Criar Internação
+        meta:
+          id: req_7889b481a5f94183903b3465fa70e18d
+          created: 1756755983493
+          modified: 1756756225062
+          isPrivate: false
+          sortKey: -1756755983493
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"patientId": "d0fac0ef-f82e-4e46-b39d-1f60ae58959a",
+            	"bedId": "524f8be0-0a2a-4609-9fcd-990c539ec2fe",
+            	"unitId": 1,
+            	"reason": "{% faker 'randomLoremSentence' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id"
+        name: Buscar internação por id
+        meta:
+          id: req_befb45960775432585139c2eea43a559
+          created: 1756756274486
+          modified: 1756757494625
+          isPrivate: false
+          sortKey: -1756755094976.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 04c91943-4344-4710-82dc-5fc9a5535d68
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id/discharge"
+        name: Finalizar internação
+        meta:
+          id: req_766837d75832441ca4828d48b06ab799
+          created: 1756757440070
+          modified: 1756757713338
+          isPrivate: false
+          sortKey: -1756754650718.25
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"endDate": "{% faker 'randomDateFuture' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 04c91943-4344-4710-82dc-5fc9a5535d68
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:id/cancel"
+        name: Cancelar internação
+        meta:
+          id: req_050be614372345f08b32bbe615018c75
+          created: 1756757740413
+          modified: 1756757855928
+          isPrivate: false
+          sortKey: -1756754428589.125
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"reason": "{% faker 'randomPhrase' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: 20d28980-f96b-46c6-8434-197b6b6b3122
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+        'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+    environment:
+      RESOURCE: admissions
+  - name: Exame
+    meta:
+      id: fld_124e533bc5ef4814bbdf9324338b5b0e
+      created: 1756765034805
+      modified: 1756769530546
+      sortKey: -1756750685437.787
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Criar Exame
+        meta:
+          id: req_c729b33ab69f4796b8d81caf03fc548a
+          created: 1756765117111
+          modified: 1756766747622
+          isPrivate: false
+          sortKey: -1756765117111
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"patientId": "d0fac0ef-f82e-4e46-b39d-1f60ae58959a",
+            	"unitId": 1,
+            	"professionalId": "bafc065a-cf36-46f2-9e53-046fa110f76f",
+            	"type": "URINE_TEST"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/:examId"
+        name: Buscar Exame por Id
+        meta:
+          id: req_1eb20f73342c43e49f13ef6baf85d5fd
+          created: 1756765563451
+          modified: 1756765590259
+          isPrivate: false
+          sortKey: -1756765563451
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: examId
+            value: 77eeffea-89c9-4827-b8d7-aae321f22574
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/patient/:patientId"
+        name: Buscar Exames de um paciente
+        meta:
+          id: req_93c06fb0721a4bceaac79c1e4e6d062d
+          created: 1756765624079
+          modified: 1756766840975
+          isPrivate: false
+          sortKey: -1756765340281
+        method: GET
+        parameters:
+          - id: pair_8b6243fa27894b72b6a3082b24c52564
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_209cfb92615c4c86b77803b32c38e6c4
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: patientId
+            value: d0fac0ef-f82e-4e46-b39d-1f60ae58959a
+      - url: "{{ _.BASE_URL }}/{{ _.RESOURCE }}/unit/:unitId"
+        name: Buscar Exames de uma unidade
+        meta:
+          id: req_8c711e9fca7245959c129c19c65b7869
+          created: 1756765775611
+          modified: 1756766818959
+          isPrivate: false
+          sortKey: -1756765228696
+        method: GET
+        parameters:
+          - id: pair_4d7b5dd1a05941858feb7e3e773b9745
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_e8c1aab9a4d049c2a31421288f43ace8
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: unitId
+            value: "1"
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:examId/schedule"
+        name: Agendar Exame
+        meta:
+          id: req_1ea736285cd74c7f95632243988bbce1
+          created: 1756765867968
+          modified: 1756766077771
+          isPrivate: false
+          sortKey: -1756760550302
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"scheduledDate": "2025-09-15"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: examId
+            value: 77eeffea-89c9-4827-b8d7-aae321f22574
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:examId/start"
+        name: Iniciar Exame
+        meta:
+          id: req_88c8ca231b664f59b91b90e259b6e933
+          created: 1756766088919
+          modified: 1756766154291
+          isPrivate: false
+          sortKey: -1756758266897.5
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: examId
+            value: 77eeffea-89c9-4827-b8d7-aae321f22574
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:examId/complete"
+        name: Finalizar Exame
+        meta:
+          id: req_28e310e35c0c4ca1a08b58489f149885
+          created: 1756766111758
+          modified: 1756766207788
+          isPrivate: false
+          sortKey: -1756757125195.25
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"resultText": "{% faker 'randomPhrase' %}",
+            	"notes": "{% faker 'randomPhrase' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: examId
+            value: 77eeffea-89c9-4827-b8d7-aae321f22574
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:examId/cancel"
+        name: Cancelar Exame
+        meta:
+          id: req_86b5916915d74f0db29f29b3400ccfd2
+          created: 1756766224798
+          modified: 1756766288375
+          isPrivate: false
+          sortKey: -1756756554344.125
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"notes": "{% faker 'randomPhrase' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: examId
+            value: 8a11d076-e79e-4de0-a362-6fec73070775
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+        'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+    environment:
+      RESOURCE: exams
+  - name: Prescrição
+    meta:
+      id: fld_35000887c3be49218b060c4613315034
+      created: 1756769525864
+      modified: 1756769562712
+      sortKey: -1756750685437.7383
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Criar prescrição
+        meta:
+          id: req_d3b1372711ee422f88ed55ccbb49a4e6
+          created: 1756769568921
+          modified: 1756769720674
+          isPrivate: false
+          sortKey: -1756769568921
+        method: POST
+        body:
+          mimeType: application/json
+          text: >
+            {
+              "patientId": "d0fac0ef-f82e-4e46-b39d-1f60ae58959a",
+              "professionalId": "bafc065a-cf36-46f2-9e53-046fa110f76f",
+              "notes": "Paciente com sintomas leves, manter hidratação e repouso.",
+              "validUntil": "2025-09-30",
+              "items": [
+                {
+                  "medicationName": "Paracetamol",
+                  "dosage": "500mg",
+                  "frequency": "A cada 8 horas",
+                  "quantity": 10,
+                  "instructions": "Tomar após as refeições."
+                },
+                {
+                  "medicationName": "Dipirona",
+                  "dosage": "1g",
+                  "frequency": "A cada 6 horas",
+                  "quantity": 15,
+                  "instructions": "Em caso de dor ou febre acima de 38°C."
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/:prescriptionId/cancel"
+        name: Cancelar prescrição
+        meta:
+          id: req_fe726dbc3c41440387753403dd0508bc
+          created: 1756770107918
+          modified: 1756770175321
+          isPrivate: false
+          sortKey: -1756767566186
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "reason": "{% faker 'randomPhrase' %}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: prescriptionId
+            value: bf655180-9550-44cb-959c-87aeb5a71445
+      - url: "{{BASE_URL}}/{{RESOURCE}}/patient/:patientId"
+        name: Buscar prescrição por paciete
+        meta:
+          id: req_8b048e8346134979b877a69400c5bcf6
+          created: 1756770210388
+          modified: 1756770265717
+          isPrivate: false
+          sortKey: -1756766564818.5
+        method: GET
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "reason": "{% faker 'randomPhrase' %}"
+            }
+        parameters:
+          - id: pair_1ddab47169c34e25ba8734db094fd691
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_b13aad8f4a7c4fa09b3d9932220f4232
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: patientId
+            value: d0fac0ef-f82e-4e46-b39d-1f60ae58959a
+      - url: "{{BASE_URL}}/{{RESOURCE}}/professional/me"
+        name: Buscar prescrição do profissional autenticado
+        meta:
+          id: req_ca01248d19e14cb4a5f55924f6b8e658
+          created: 1756770291158
+          modified: 1756770303362
+          isPrivate: false
+          sortKey: -1756766064134.75
+        method: GET
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "reason": "{% faker 'randomPhrase' %}"
+            }
+        parameters:
+          - id: pair_1ddab47169c34e25ba8734db094fd691
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_b13aad8f4a7c4fa09b3d9932220f4232
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+        'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+    environment:
+      RESOURCE: prescriptions
+  - name: Historico Clinico
+    meta:
+      id: fld_f2993f62ed9a48c08a04c7215261b0b0
+      created: 1756770382245
+      modified: 1756770467303
+      sortKey: -1756151566669.8691
+    children:
+      - url: "{{BASE_URL}}/{{RESOURCE}}"
+        name: Adicionar nota ao historico clinico
+        meta:
+          id: req_6c54ebc2c35142c687435ba6b5a6e7c6
+          created: 1756770382246
+          modified: 1756770573364
+          isPrivate: false
+          sortKey: -1756769568921
+        method: POST
+        body:
+          mimeType: application/json
+          text: >
+            {
+              "patientId": "d0fac0ef-f82e-4e46-b39d-1f60ae58959a",
+              "professionalId": "bafc065a-cf36-46f2-9e53-046fa110f76f",
+              "type": "PROGRESS",
+              "content": "Paciente apresenta melhora significativa, pressão arterial dentro dos limites normais."
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{BASE_URL}}/{{RESOURCE}}/patient/:patientId"
+        name: Buscar histórico clinico do paciente
+        meta:
+          id: req_6181d61f257f48129341f2301c2edf6f
+          created: 1756770382249
+          modified: 1756770629060
+          isPrivate: false
+          sortKey: -1756766564818.5
+        method: GET
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "reason": "{% faker 'randomPhrase' %}"
+            }
+        parameters:
+          - id: pair_1ddab47169c34e25ba8734db094fd691
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_b13aad8f4a7c4fa09b3d9932220f4232
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: patientId
+            value: d0fac0ef-f82e-4e46-b39d-1f60ae58959a
+      - url: "{{BASE_URL}}/{{RESOURCE}}/professional/me"
+        name: Buscar notas do profissional logado
+        meta:
+          id: req_315e4c2dcbcc463f85bf39e788c38e4b
+          created: 1756770382251
+          modified: 1756770668650
+          isPrivate: false
+          sortKey: -1756766064134.75
+        method: GET
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "reason": "{% faker 'randomPhrase' %}"
+            }
+        parameters:
+          - id: pair_1ddab47169c34e25ba8734db094fd691
+            name: page
+            value: "1"
+            disabled: false
+          - id: pair_b13aad8f4a7c4fa09b3d9932220f4232
+            name: limit
+            value: "10"
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_57a51883f8f245009fc56871e63693f6',
+        'b64::JC50b2tlbg==::46b', 'always', 60 %}"
+    environment:
+      RESOURCE: clinical-notes
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_a668905af64dbd8b483578bfc51556ab38f487d9
+    created: 1756420579899
+    modified: 1756420579899
+environments:
+  name: Base Environment
+  meta:
+    id: env_a668905af64dbd8b483578bfc51556ab38f487d9
+    created: 1756420579898
+    modified: 1756420579898
+    isPrivate: false
+  subEnvironments:
+    - name: DEV
+      meta:
+        id: env_20801a9165324187821f09d205f99544
+        created: 1756420646589
+        modified: 1756420705257
+        isPrivate: false
+        sortKey: 1756420646589
+      data:
+        BASE_URL: http://localhost:3000
+      color: "#99ff00"
