@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 interface TokenPayload {
   sub: string;
-  role: string;
+  role: string[];
 }
 export async function ensureAuthenticated(
   request: Request,
